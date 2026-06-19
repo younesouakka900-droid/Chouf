@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم — شوف</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@300;400;500;700&display=swap');
+
+  :root{
+    --bg:#0b0b0d;
+    --bg-elev:#141417;
+    --bg-elev2:#1b1b1f;
+    --line:#232327;
+    --ink:#f2f0eb;
+    --ink-dim:#9a978f;
+    --accent:#d4a25a;
+    --accent-dim:#7a6240;
+    --danger:#c75c4a;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Tajawal', sans-serif;
+    min-height:100vh;
+  }
+
+  /* ===== Login screen ===== */
+  #loginScreen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+
+  .login-card{
+    background:var(--bg-elev);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:42px 36px;
+    width:100%;
+    max-width:380px;
+  }
+
+  .login-card .dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 14px var(--accent);
+    margin-bottom:18px;
+  }
+
+  .login-card h1{
+    font-family:'Cairo', sans-serif;
+    font-weight:900;
+    font-size:24px;
+    margin-bottom:6px;
+  }
+
+  .login-card p{color:var(--ink-dim); font-size:14px; margin-bottom:28px;}
+
+  .field{margin-bottom:16px;}
+
+  .field label{
+    display:block;
+    font-size:13px;
+    color:var(--ink-dim);
+    margin-bottom:7px;
+    font-weight:500;
+  }
+
+  .field input{
+    width:100%;
+    background:var(--bg-elev2);
+    border:1px solid var(--line);
+    color:var(--ink);
+    padding:12px 14px;
+    border-radius:8px;
+    font-family:'Tajawal', sans-serif;
+    font-size:14px;
+    outline:none;
+    transition:border-color .2s;
+  }
+
+  .field input:focus{border-color:var(--accent);}
+
+  .btn{
+    width:100%;
+    background:var(--accent);
+    color:#0b0b0d;
+    border:none;
+    padding:13px;
+    border-radius:8px;
+    font-family:'Tajawal', sans-serif;
+    font-weight:700;
+    font-size:14.5px;
+    cursor:pointer;
+    transition:opacity .2s;
+    margin-top:6px;
+  }
+
+  .btn:hover{opacity:0.88;}
+  .btn:disabled{opacity:0.5; cursor:not-allowed;}
+
+  .btn-secondary{
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--ink);
+  }
+
+  .btn-danger{background:var(--danger); color:#fff;}
+
+  .login-error{
+    color:var(--danger);
+    font-size:13px;
+    margin-top:14px;
+    text-align:center;
+    display:none;
+  }
+
+  /* ===== Dashboard ===== */
+  #dashboard{display:none;}
+
+  header{
+    position:sticky; top:0; z-index:40;
+    background:rgba(11,11,13,0.9);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+    padding:20px 32px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .brand{
+    font-family:'Cairo', sans-serif;
+    font-weight:900;
+    font-size:19px;
+    display:flex; align-items:center; gap:10px;
+  }
+
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent);}
+
+  .header-actions{display:flex; gap:12px; align-items:center;}
+
+  .header-actions button{
+    background:var(--bg-elev);
+    border:1px solid var(--line);
+    color:var(--ink);
+    padding:9px 18px;
+    border-radius:8px;
+    font-family:'Tajawal', sans-serif;
+    font-size:13.5px;
+    cursor:pointer;
+    transition:border-color .2s;
+  }
+
+  .header-actions button:hover{border-color:var(--accent-dim);}
+
+  .container{max-width:1100px; margin:0 auto; padding:32px;}
+
+  .stats-row{display:flex; gap:16px; margin-bottom:28px; flex-wrap:wrap;}
+
+  .stat-card{
+    background:var(--bg-elev);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:18px 22px;
+    min-width:140px;
+  }
+
+  .stat-card .num{font-family:'Cairo',sans-serif; font-weight:900; font-size:26px; color:var(--accent);}
+  .stat-card .label{font-size:12.5px; color:var(--ink-dim); margin-top:2px;}
+
+  .panel{
+    background:var(--bg-elev);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:26px;
+    margin-bottom:28px;
+  }
+
+  .panel h2{
+    font-family:'Cairo', sans-serif;
+    font-size:17px;
+    margin-bottom:20px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+
+  .form-grid .full{grid-column:1/-1;}
+
+  .field textarea{
+    width:100%;
+    background:var(--bg-elev2);
+    border:1px solid var(--line);
+    color:var(--ink);
+    padding:12px 14px;
+    border-radius:8px;
+    font-family:'Tajawal', sans-serif;
+    font-size:14px;
+    outline:none;
+    resize:vertical;
+    min-height:70px;
+    transition:border-color .2s;
+  }
+
+  .field textarea:focus{border-color:var(--accent);}
+
+  .field select{
+    width:100%;
+    background:var(--bg-elev2);
+    border:1px solid var(--line);
+    color:var(--ink);
+    padding:12px 14px;
+    border-radius:8px;
+    font-family:'Tajawal', sans-serif;
+    font-size:14px;
+    outline:none;
+    cursor:pointer;
+  }
+
+  .hint{font-size:12px; color:var(--ink-dim); margin-top:6px; line-height:1.6;}
+
+  .form-actions{
+    display:flex;
+    gap:12px;
+    margin-top:8px;
+  }
+
+  .form-actions .btn{width:auto; padding:12px 26px;}
+
+  /* ===== List ===== */
+  .item-row{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:14px;
+    background:var(--bg-elev2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    margin-bottom:10px;
+  }
+
+  .item-thumb{
+    width:78px; height:52px;
+    border-radius:6px;
+    background:#000;
+    object-fit:cover;
+    flex-shrink:0;
+  }
+
+  .item-info{flex:1; min-width:0;}
+  .item-info .t{font-family:'Cairo',sans-serif; font-weight:700; font-size:14.5px; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .item-info .u{font-size:12px; color:var(--ink-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:400px;}
+
+  .item-type{
+    font-size:11px;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:100px;
+    background:rgba(212,162,90,0.12);
+    color:var(--accent);
+    flex-shrink:0;
+  }
+
+  .item-actions{display:flex; gap:8px; flex-shrink:0;}
+
+  .icon-btn{
+    width:34px; height:34px;
+    border-radius:7px;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--ink-dim);
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .2s;
+  }
+
+  .icon-btn:hover{border-color:var(--accent); color:var(--accent);}
+  .icon-btn.del:hover{border-color:var(--danger); color:var(--danger);}
+
+  .empty-list{text-align:center; padding:40px 20px; color:var(--ink-dim); font-size:14px;}
+
+  .toast{
+    position:fixed;
+    bottom:28px;
+    left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--bg-elev2);
+    border:1px solid var(--line);
+    color:var(--ink);
+    padding:14px 24px;
+    border-radius:10px;
+    font-size:14px;
+    opacity:0;
+    pointer-events:none;
+    transition:all .3s ease;
+    z-index:200;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  }
+
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  .toast.error{border-color:var(--danger);}
+
+  @media (max-width:640px){
+    header{padding:16px 18px;}
+    .container{padding:20px 16px;}
+    .form-grid{grid-template-columns:1fr;}
+    .item-row{flex-wrap:wrap;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Login Screen ===== -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="dot"></div>
+    <h1>تسجيل الدخول</h1>
+    <p>الدخول إلى لوحة تحكم شوف</p>
+
+    <div class="field">
+      <label>البريد الإلكتروني</label>
+      <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>كلمة المرور</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn" id="loginBtn">دخول</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ===== Dashboard ===== -->
+<div id="dashboard">
+  <header>
+    <div class="brand"><span class="dot"></span>شوف — لوحة التحكم</div>
+    <div class="header-actions">
+      <button id="viewSiteBtn">عرض الموقع</button>
+      <button id="logoutBtn">تسجيل الخروج</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="num" id="statTotal">0</div><div class="label">إجمالي العناصر</div></div>
+      <div class="stat-card"><div class="num" id="statVideos">0</div><div class="label">فيديوهات</div></div>
+      <div class="stat-card"><div class="num" id="statImages">0</div><div class="label">صور</div></div>
+    </div>
+
+    <div class="panel">
+      <h2 id="formTitle">+ إضافة عنصر جديد</h2>
+      <form id="itemForm">
+        <input type="hidden" id="editId" value="">
+        <div class="form-grid">
+          <div class="field full">
+            <label>الرابط</label>
+            <input type="url" id="fUrl" placeholder="https://..." required>
+            <div class="hint">رابط الفيديو (embed أو مباشر) أو رابط الصورة.</div>
+          </div>
+
+          <div class="field">
+            <label>النوع</label>
+            <select id="fType">
+              <option value="video">فيديو</option>
+              <option value="image">صورة</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>طريقة العرض</label>
+            <select id="fEmbedMode">
+              <option value="auto">تلقائي (موصى به)</option>
+              <option value="iframe">iframe (مشغل الموقع الأصلي)</option>
+              <option value="video">فيديو مباشر (ملف .mp4 ونحوه)</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label>العنوان</label>
+            <input type="text" id="fTitle" placeholder="عنوان العنصر">
+          </div>
+
+          <div class="field full">
+            <label>الوصف المختصر</label>
+            <textarea id="fDesc" placeholder="وصف قصير (سطر أو سطرين، اختياري)"></textarea>
+          </div>
+
+          <div class="field full">
+            <label>القصة / المقالة (نص كامل)</label>
+            <textarea id="fStory" placeholder="اكتب هنا المقالة أو القصة المرفقة بهذا المحتوى (اختياري)" style="min-height:160px;"></textarea>
+            <div class="hint">سيظهر النص القصير تلقائيًا تحت المحتوى، وإن كان طويلًا سيظهر زر "اقرأ القصة كاملة" للزوار.</div>
+          </div>
+
+          <div class="field full">
+            <label>رابط صورة مصغّرة (Thumbnail) — للفيديوهات فقط</label>
+            <input type="url" id="fThumb" placeholder="https://...">
+            <div class="hint">إن تُركت فارغة، ستظهر صورة افتراضية في صفحة العرض.</div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn" id="submitBtn" style="width:auto;">إضافة العنصر</button>
+          <button type="button" class="btn btn-secondary" id="cancelEditBtn" style="display:none;">إلغاء التعديل</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>المحتوى الحالي</h2>
+      <div id="itemsList"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore, collection, addDoc, updateDoc, deleteDoc, doc,
+    getDocs, query, orderBy, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // ⚠️ استبدل هذه القيم بإعدادات مشروع Firebase الخاص بك (نفس القيم المستخدمة في index.html)
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const loginScreen = document.getElementById('loginScreen');
+  const dashboard = document.getElementById('dashboard');
+  const loginError = document.getElementById('loginError');
+
+  // ===== Auth =====
+  document.getElementById('loginBtn').addEventListener('click', async () => {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    loginError.style.display = 'none';
+    try{
+      await signInWithEmailAndPassword(auth, email, password);
+    }catch(err){
+      loginError.textContent = 'بيانات الدخول غير صحيحة.';
+      loginError.style.display = 'block';
+    }
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
+  document.getElementById('viewSiteBtn').addEventListener('click', () => window.open('index.html', '_blank'));
+
+  onAuthStateChanged(auth, (user) => {
+    if(user){
+      loginScreen.style.display = 'none';
+      dashboard.style.display = 'block';
+      loadItems();
+    } else {
+      loginScreen.style.display = 'flex';
+      dashboard.style.display = 'none';
+    }
+  });
+
+  // ===== Toast =====
+  function showToast(msg, isError){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show' + (isError ? ' error' : '');
+    setTimeout(() => t.className = 'toast', 2400);
+  }
+
+  // ===== Form handling =====
+  const form = document.getElementById('itemForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const cancelEditBtn = document.getElementById('cancelEditBtn');
+  const formTitle = document.getElementById('formTitle');
+
+  function resetForm(){
+    form.reset();
+    document.getElementById('editId').value = '';
+    submitBtn.textContent = 'إضافة العنصر';
+    formTitle.textContent = '+ إضافة عنصر جديد';
+    cancelEditBtn.style.display = 'none';
+  }
+
+  cancelEditBtn.addEventListener('click', resetForm);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+
+    const data = {
+      url: document.getElementById('fUrl').value.trim(),
+      type: document.getElementById('fType').value,
+      embedMode: document.getElementById('fEmbedMode').value,
+      title: document.getElementById('fTitle').value.trim(),
+      description: document.getElementById('fDesc').value.trim(),
+      story: document.getElementById('fStory').value.trim(),
+      thumbnail: document.getElementById('fThumb').value.trim(),
+    };
+
+    const editId = document.getElementById('editId').value;
+
+    try{
+      if(editId){
+        await updateDoc(doc(db, 'gallery', editId), data);
+        showToast('تم تحديث العنصر بنجاح');
+      } else {
+        data.createdAt = serverTimestamp();
+        await addDoc(collection(db, 'gallery'), data);
+        showToast('تمت إضافة العنصر بنجاح');
+      }
+      resetForm();
+      loadItems();
+    } catch(err){
+      console.error(err);
+      showToast('حدث خطأ، حاول مرة أخرى', true);
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  // ===== List + edit/delete =====
+  let cachedItems = [];
+
+  async function loadItems(){
+    const list = document.getElementById('itemsList');
+    list.innerHTML = '<div class="empty-list">جارٍ التحميل...</div>';
+    try{
+      const q = query(collection(db, 'gallery'), orderBy('createdAt', 'desc'));
+      const snap = await getDocs(q);
+      cachedItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderList();
+      updateStats();
+    } catch(err){
+      console.error(err);
+      list.innerHTML = '<div class="empty-list">تعذر تحميل العناصر. تحقق من إعدادات Firebase.</div>';
+    }
+  }
+
+  function updateStats(){
+    document.getElementById('statTotal').textContent = cachedItems.length;
+    document.getElementById('statVideos').textContent = cachedItems.filter(i => i.type === 'video').length;
+    document.getElementById('statImages').textContent = cachedItems.filter(i => i.type === 'image').length;
+  }
+
+  function renderList(){
+    const list = document.getElementById('itemsList');
+    if(cachedItems.length === 0){
+      list.innerHTML = '<div class="empty-list">لا يوجد محتوى مضاف بعد.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    cachedItems.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'item-row';
+
+      const thumbSrc = item.type === 'image' ? (item.thumbnail || item.url) : (item.thumbnail || '');
+
+      row.innerHTML = `
+        ${thumbSrc
+          ? `<img class="item-thumb" src="${escapeHtml(thumbSrc)}" loading="lazy" onerror="this.style.visibility='hidden'">`
+          : `<div class="item-thumb" style="display:flex;align-items:center;justify-content:center;color:var(--ink-dim);font-size:11px;">بدون</div>`}
+        <div class="item-info">
+          <div class="t">${escapeHtml(item.title || 'بدون عنوان')}</div>
+          <div class="u">${escapeHtml(item.url)}</div>
+        </div>
+        <div class="item-type">${item.type === 'image' ? 'صورة' : 'فيديو'}</div>
+        ${item.story && item.story.trim().length > 0
+          ? `<div class="item-type" style="background:rgba(199,92,74,0.12); color:#e08d7a;">قصة</div>`
+          : ''}
+        <div class="item-actions">
+          <button class="icon-btn edit-btn" title="تعديل" data-id="${item.id}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.85 0 014 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+          </button>
+          <button class="icon-btn del del-btn" title="حذف" data-id="${item.id}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/></svg>
+          </button>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+
+    document.querySelectorAll('.edit-btn').forEach(b => b.addEventListener('click', () => startEdit(b.dataset.id)));
+    document.querySelectorAll('.del-btn').forEach(b => b.addEventListener('click', () => confirmDelete(b.dataset.id)));
+  }
+
+  function startEdit(id){
+    const item = cachedItems.find(i => i.id === id);
+    if(!item) return;
+
+    document.getElementById('editId').value = id;
+    document.getElementById('fUrl').value = item.url || '';
+    document.getElementById('fType').value = item.type || 'video';
+    document.getElementById('fEmbedMode').value = item.embedMode || 'auto';
+    document.getElementById('fTitle').value = item.title || '';
+    document.getElementById('fDesc').value = item.description || '';
+    document.getElementById('fStory').value = item.story || '';
+    document.getElementById('fThumb').value = item.thumbnail || '';
+
+    formTitle.textContent = 'تعديل العنصر';
+    submitBtn.textContent = 'حفظ التعديلات';
+    cancelEditBtn.style.display = 'inline-block';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  let pendingDeleteId = null;
+  async function confirmDelete(id){
+    if(!confirm('هل أنت متأكد من حذف هذا العنصر؟ لا يمكن التراجع عن هذا الإجراء.')) return;
+    try{
+      await deleteDoc(doc(db, 'gallery', id));
+      showToast('تم حذف العنصر');
+      loadItems();
+    } catch(err){
+      console.error(err);
+      showToast('تعذر حذف العنصر', true);
+    }
+  }
+
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str || '';
+    return d.innerHTML;
+  }
+</script>
+
+</body>
+</html>
